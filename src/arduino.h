@@ -22,46 +22,39 @@
  * IN THE SOFTWARE.
  */
 
-#include <QCommandLineOption>
-#include <QCommandLineParser>
-#include <QCoreApplication>
-#include <QJsonDocument>
+#ifndef ARDUINO_H
+#define ARDUINO_H
 
-#include "arduino.h"
+#include <QJsonObject>
+#include <QObject>
+#include <QSerialPort>
+#include <QTimer>
 
-int main(int argc, char **argv)
+class Arduino : public QObject
 {
-    QCoreApplication app(argc, argv);
+    Q_OBJECT
 
-    QCommandLineOption arduinoDeviceOption(
-        "arduino-device",
-        "path to Arduino device",
-        "path",
-        "/dev/ttyACM0"
-    );
-    QCommandLineOption arduinoBaudOption(
-        "arduino-baud",
-        "baud rate for communication",
-        "bps",
-        "9600"
-    );
+public:
 
-    QCommandLineParser parser;
-    parser.addOption(arduinoDeviceOption);
-    parser.addOption(arduinoBaudOption);
-    parser.addHelpOption();
-    if (!parser.parse(app.arguments())) {
-        app.exit(1);
-    }
+    Arduino(const QString &device, qint32 baudRate);
 
-    if (parser.isSet("help")) {
-        parser.showHelp();
-    }
+Q_SIGNALS:
 
-    Arduino arduino(parser.value(arduinoDeviceOption), parser.value(arduinoBaudOption).toInt());
-    QObject::connect(&arduino, &Arduino::dataReceived, [](const QJsonObject &object) {
-        qDebug("Data received: %s", QJsonDocument(object).toJson().constData());
-    });
+    void dataReceived(const QJsonObject &object);
 
-    return app.exec();
-}
+private Q_SLOTS:
+
+    void onReadyRead();
+    void onError(QSerialPort::SerialPortError error);
+    void onTimeout();
+
+private:
+
+    void init();
+
+    QSerialPort mSerialPort;
+    QByteArray mBuffer;
+    QTimer mRetryTimer;
+};
+
+#endif // ARDUINO_H

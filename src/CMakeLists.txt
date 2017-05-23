@@ -1,4 +1,5 @@
 set(SRC
+    arduino.cpp
     main.cpp
 )
 
