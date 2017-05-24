@@ -29,7 +29,7 @@ ENV \
     INFLUXDB_TAGS=
 
 # Set the command for running the application
-CMD sechatr \
+CMD thsat \
     --arduino-device "$ARDUINO_DEVICE" \
     --arduino-baud "$ARDUINO_BAUD" \
     --influxdb-addr "$INFLUXDB_ADDR" \
