@@ -20,7 +20,7 @@ The following items are required to build the application:
 
 - CMake 3.2.0
 - A C++ compiler that supports C++11
-- Qt 5.4+ (with QtSerialPort)
+- Qt 5.3+ (with QtSerialPort)
 
 To perform the build, use the following commands:
 
