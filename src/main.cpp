@@ -28,6 +28,7 @@
 #include <QJsonDocument>
 
 #include "arduino.h"
+#include "influxdb.h"
 
 int main(int argc, char **argv)
 {
@@ -45,6 +46,30 @@ int main(int argc, char **argv)
         "bps",
         "9600"
     );
+    QCommandLineOption influxdbAddrOption(
+        "influxdb-addr",
+        "address of InfluxDB host",
+        "addr",
+        "http://localhost:8086"
+    );
+    QCommandLineOption influxdbDatabaseOption(
+        "influxdb-database",
+        "database to use for storage",
+        "name",
+        "thstat"
+    );
+    QCommandLineOption influxdbUsernameOption(
+        "influxdb-username",
+        "connection username",
+        "value",
+        ""
+    );
+    QCommandLineOption influxdbPasswordOption(
+        "influxdb-password",
+        "connection password",
+        "value",
+        ""
+    );
 
     QCommandLineParser parser;
     parser.addOption(arduinoDeviceOption);
@@ -59,9 +84,14 @@ int main(int argc, char **argv)
     }
 
     Arduino arduino(parser.value(arduinoDeviceOption), parser.value(arduinoBaudOption).toInt());
-    QObject::connect(&arduino, &Arduino::dataReceived, [](const QJsonObject &object) {
-        qDebug("Data received: %s", QJsonDocument(object).toJson().constData());
-    });
+    InfluxDB influxdb(
+        parser.value(influxdbAddrOption),
+        parser.value(influxdbDatabaseOption),
+        parser.value(influxdbUsernameOption),
+        parser.value(influxdbPasswordOption)
+    );
+
+    QObject::connect(&arduino, &Arduino::dataReceived, &influxdb, &InfluxDB::writeData);
 
     return app.exec();
 }

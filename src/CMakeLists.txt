@@ -1,5 +1,6 @@
 set(SRC
     arduino.cpp
+    influxdb.cpp
     main.cpp
 )
 
