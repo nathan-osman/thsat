@@ -28,6 +28,7 @@
 #include <QJsonDocument>
 
 #include "arduino.h"
+#include "buffer.h"
 #include "influxdb.h"
 
 int main(int argc, char **argv)
@@ -45,6 +46,12 @@ int main(int argc, char **argv)
         "baud rate for communication",
         "bps",
         "9600"
+    );
+    QCommandLineOption bufferDelayOption(
+        "buffer-delay",
+        "time between transmissions (in seconds)",
+        "time",
+        "120"
     );
     QCommandLineOption influxdbAddrOption(
         "influxdb-addr",
@@ -80,6 +87,7 @@ int main(int argc, char **argv)
     QCommandLineParser parser;
     parser.addOption(arduinoDeviceOption);
     parser.addOption(arduinoBaudOption);
+    parser.addOption(bufferDelayOption);
     parser.addOption(influxdbAddrOption);
     parser.addOption(influxdbDatabaseOption);
     parser.addOption(influxdbUsernameOption);
@@ -95,6 +103,7 @@ int main(int argc, char **argv)
     }
 
     Arduino arduino(parser.value(arduinoDeviceOption), parser.value(arduinoBaudOption).toInt());
+    Buffer buffer(parser.value(bufferDelayOption).toInt());
     InfluxDB influxdb(
         parser.value(influxdbAddrOption),
         parser.value(influxdbDatabaseOption),
@@ -103,7 +112,8 @@ int main(int argc, char **argv)
         parser.value(influxdbTagsOption)
     );
 
-    QObject::connect(&arduino, &Arduino::dataReceived, &influxdb, &InfluxDB::writeData);
+    QObject::connect(&arduino, &Arduino::dataReceived, &buffer, &Buffer::writeData);
+    QObject::connect(&buffer, &Buffer::dataReceived, &influxdb, &InfluxDB::writeData);
 
     return app.exec();
 }
