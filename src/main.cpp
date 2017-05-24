@@ -74,6 +74,10 @@ int main(int argc, char **argv)
     QCommandLineParser parser;
     parser.addOption(arduinoDeviceOption);
     parser.addOption(arduinoBaudOption);
+    parser.addOption(influxdbAddrOption);
+    parser.addOption(influxdbDatabaseOption);
+    parser.addOption(influxdbUsernameOption);
+    parser.addOption(influxdbPasswordOption);
     parser.addHelpOption();
     if (!parser.parse(app.arguments())) {
         app.exit(1);

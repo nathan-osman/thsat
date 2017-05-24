@@ -27,6 +27,7 @@
 
 #include <QJsonObject>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QObject>
 
 class InfluxDB : public QObject
@@ -41,7 +42,14 @@ public Q_SLOTS:
 
     void writeData(const QJsonObject &object);
 
+private Q_SLOTS:
+
+    void onFinished(QNetworkReply *reply);
+
 private:
+
+    void init();
+    QByteArray generateData(const QJsonObject &object) const;
 
     QNetworkAccessManager mNetworkAccessManager;
     QString mAddr;
