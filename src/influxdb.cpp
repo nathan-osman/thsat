@@ -29,11 +29,12 @@
 
 #include "influxdb.h"
 
-InfluxDB::InfluxDB(const QString &addr, const QString &database, const QString &username, const QString &password)
+InfluxDB::InfluxDB(const QString &addr, const QString &database, const QString &username, const QString &password, const QString &tags)
     : mAddr(addr),
       mDatabase(database),
       mUsername(username),
-      mPassword(password)
+      mPassword(password),
+      mTags(tags.length() ? "," + tags : "")
 {
     connect(&mNetworkAccessManager, &QNetworkAccessManager::finished, this, &InfluxDB::onFinished);
 
@@ -84,7 +85,7 @@ QByteArray InfluxDB::generateData(const QJsonObject &object) const
 {
     QByteArray data;
     for (auto i = object.constBegin(); i != object.constEnd(); ++i) {
-        data.append(i.key() + " value=" + i.value().toString() + "\n");
+        data.append(i.key() + mTags + " value=" + i.value().toString() + "\n");
     }
     return data;
 }

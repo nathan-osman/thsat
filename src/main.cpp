@@ -70,6 +70,12 @@ int main(int argc, char **argv)
         "value",
         ""
     );
+    QCommandLineOption influxdbTagsOption(
+        "influxdb-tags",
+        "tags to add to each data point",
+        "tags",
+        ""
+    );
 
     QCommandLineParser parser;
     parser.addOption(arduinoDeviceOption);
@@ -78,6 +84,7 @@ int main(int argc, char **argv)
     parser.addOption(influxdbDatabaseOption);
     parser.addOption(influxdbUsernameOption);
     parser.addOption(influxdbPasswordOption);
+    parser.addOption(influxdbTagsOption);
     parser.addHelpOption();
     if (!parser.parse(app.arguments())) {
         app.exit(1);
@@ -92,7 +99,8 @@ int main(int argc, char **argv)
         parser.value(influxdbAddrOption),
         parser.value(influxdbDatabaseOption),
         parser.value(influxdbUsernameOption),
-        parser.value(influxdbPasswordOption)
+        parser.value(influxdbPasswordOption),
+        parser.value(influxdbTagsOption)
     );
 
     QObject::connect(&arduino, &Arduino::dataReceived, &influxdb, &InfluxDB::writeData);

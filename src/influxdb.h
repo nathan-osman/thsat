@@ -36,7 +36,7 @@ class InfluxDB : public QObject
 
 public:
 
-    InfluxDB(const QString &addr, const QString &database, const QString &username, const QString &password);
+    InfluxDB(const QString &addr, const QString &database, const QString &username, const QString &password, const QString &tags);
 
 public Q_SLOTS:
 
@@ -56,6 +56,7 @@ private:
     QString mDatabase;
     QString mUsername;
     QString mPassword;
+    QString mTags;
 };
 
 #endif // INFLUXDB_H
