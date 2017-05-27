@@ -22,6 +22,7 @@ RUN \
 ENV \
     ARDUINO_DEVICE=/dev/ttyACM0 \
     ARDUINO_BAUD=9600 \
+    BUFFER_DELAY=300 \
     INFLUXDB_ADDR=http://localhost:8086 \
     INFLUXDB_DATABASE=thstat \
     INFLUXDB_USERNAME= \
@@ -32,6 +33,7 @@ ENV \
 CMD thsat \
     --arduino-device "$ARDUINO_DEVICE" \
     --arduino-baud "$ARDUINO_BAUD" \
+    --buffer-delay "$BUFFER_DELAY" \
     --influxdb-addr "$INFLUXDB_ADDR" \
     --influxdb-database "$INFLUXDB_DATABASE" \
     --influxdb-username "$INFLUXDB_USERNAME" \

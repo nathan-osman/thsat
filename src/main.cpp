@@ -51,7 +51,7 @@ int main(int argc, char **argv)
         "buffer-delay",
         "time between transmissions (in seconds)",
         "time",
-        "120"
+        "300"
     );
     QCommandLineOption influxdbAddrOption(
         "influxdb-addr",
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
     }
 
     Arduino arduino(parser.value(arduinoDeviceOption), parser.value(arduinoBaudOption).toInt());
-    Buffer buffer(parser.value(bufferDelayOption).toInt());
+    Buffer buffer(parser.value(bufferDelayOption).toInt() * 1000);
     InfluxDB influxdb(
         parser.value(influxdbAddrOption),
         parser.value(influxdbDatabaseOption),
